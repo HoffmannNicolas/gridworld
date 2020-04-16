@@ -23,28 +23,30 @@ class Gridworld():
 
 
 	def _generateObjectCoord(self):
-		return [random.randint(0, self.gridWidth-1), # X-coord
-			random.randint(0, self.gridHeight-1)] # Y-coord
+		return (random.randint(0, self.gridWidth-1), # X-coord
+			random.randint(0, self.gridHeight-1)) # Y-coord
 
 
-	def _transition(self, currentCoord, agentAction):
+	def _transition(self, currentCoord, action):
 		nextCoord = currentCoord
 			# Apply transition without constraints
-		if (agentAction == "UP") : nextCoord[1] -= 1
-		if (agentAction == "DOWN") : nextCoord[1] += 1
-		if (agentAction == "LEFT") : nextCoord[0] -= 1
-		if (agentAction == "RIGHT") : nextCoord[0] += 1
+		if (action == "UP") : nextCoord = (nextCoord[0], nextCoord[1]-1)
+		if (action == "DOWN") : nextCoord = (nextCoord[0], nextCoord[1]+1)
+		if (action == "LEFT") : nextCoord = (nextCoord[0]-1, nextCoord[1])
+		if (action == "RIGHT") : nextCoord = (nextCoord[0]+1, nextCoord[1])
 			# Apply constraints
-		if (nextCoord[0] < 0 or nextCoord[0] > (self.gridWidth-1)) : nextCoord = self.agent.coord
-		if (nextCoord[1] < 0 or nextCoord[1] > (self.gridHeight-1)) : nextCoord = self.agent.coord
-
+		if (nextCoord[0] < 0 or nextCoord[0] > (self.gridWidth-1)) :
+			nextCoord = currentCoord
+		if (nextCoord[1] < 0 or nextCoord[1] > (self.gridHeight-1)) :
+			nextCoord = currentCoord
 		return nextCoord
 
 
 	def _reward(self, currentCoord, nextCoord):
 		nextReward = 0
 		episodeEnded = False
-		if (currentCoord != self.goalCoord and nextCoord == self.goalCoord) :
+
+		if (currentCoord != self.goalCoord and nextCoord == self.goalCoord):
 			nextReward = 1
 			episodeEnded = True
 		return nextReward, episodeEnded
@@ -60,11 +62,13 @@ class Gridworld():
 
 	def step(self, agentAction):
 		
-		nextCoord = self._transition(self.agent.coord, agentAction)
+		currentCoord = self.agent.coord
+		nextCoord = self._transition(currentCoord, agentAction)
 
-		reward, episodeEnded = self._reward(self.agent.coord, agentAction)
+		reward, episodeEnded = self._reward(currentCoord, nextCoord)
 
 		self.agent.coord = nextCoord
+
 		return reward, episodeEnded
 
 
@@ -87,9 +91,8 @@ class GridworldAgent():
 		return random.choice(possibleActions)
 
 
-	def __call__(self):
-		print("Agent")
-		print("coord : ", self.coord)
+	def __str__(self):
+		return "Agent " + str(self.coord)
 
 
 

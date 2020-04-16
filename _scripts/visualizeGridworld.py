@@ -13,14 +13,19 @@ import Gridworld.Gridworld as Gridworld
 gridworld = Gridworld.Gridworld()
 gridworld()
 
+
 # Start Episode
 gridworld.startEpoch()
 
-possibleActions = gridworld.possibleActions()
+episodeEnded = False
+while not(episodeEnded):
+	possibleActions = gridworld.possibleActions()
 
-agentAction = gridworld.agent.choseAction(possibleActions)
+	agentAction = gridworld.agent.choseAction(possibleActions)
 
-reward, episodeEnded = gridworld.step(agentAction)
+	print(gridworld.agent)
+	reward, episodeEnded = gridworld.step(agentAction)
+	print(gridworld.agent)
 
 print("reward ", reward)
 print("episodeEnded ", episodeEnded)
