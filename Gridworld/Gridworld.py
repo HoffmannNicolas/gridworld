@@ -1,5 +1,5 @@
 
-
+import Gridworld.GridworldAgent as GridworldAgent
 
 import numpy as np
 import random
@@ -8,7 +8,7 @@ import random
 class Gridworld():
 
 
-	def __init__(self, gridWidth=5, gridHeight=5):
+	def __init__(self, gridWidth=20, gridHeight=5):
 		print("New Gridworld")
 
 		self.gridHeight = gridHeight
@@ -19,7 +19,7 @@ class Gridworld():
 		self.startCoord = self._generateObjectCoord()
 		self.goalCoord = self._generateObjectCoord()
 
-		self.agent = GridworldAgent()
+		self.agent = GridworldAgent.GridworldAgent()
 
 
 	def _generateObjectCoord(self):
@@ -53,7 +53,7 @@ class Gridworld():
 
 
 	def startEpoch(self):
-		self.agent.coord = self._generateObjectCoord()
+		self.agent.coord = self.startCoord
 
 
 	def possibleActions(self):
@@ -76,27 +76,6 @@ class Gridworld():
 		print("grid : ", self.grid)
 		print("startCoord : ", self.startCoord)
 		print("goalCoord : ", self.goalCoord)
-
-
-
-
-class GridworldAgent():
-
-	def __init__(self):
-		print("New Agent")
-		self.coord = None
-
-
-	def choseAction(self, possibleActions):
-		return random.choice(possibleActions)
-
-
-	def __str__(self):
-		return "Agent " + str(self.coord)
-
-
-
-
 
 
 
