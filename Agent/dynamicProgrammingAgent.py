@@ -35,16 +35,21 @@ class dynamicProgrammingAgent(Agent.Agent):
 
 
     def choseAction(self, environment):
-        action = self.policy(self.state)
+        actionDistribution = sorted(self.policy(self.state), key=lambda x : x[1]) # Sort action distribution
+        action = actionDistribution[0] # Select most probable action
+        action = action[0] # (action, probability) -> action
+
+        print(f"[{self.name}] State {self.state}")
         print(f"[{self.name}] Action {action} chosen !")
         return action
 
 
     def onTransition(self, environment):
-        print(f"[{self.name}] : Sweeping...")
+
+        print(f"[{self.name}] State {self.state}")
 
         self._policyEvaluation(environment)
-        print(f"[{self.name}] : Iterative Policy Evaluation done.")
+        print(f"[{self.name}] : Policy Evaluation done.")
 
 
         """
