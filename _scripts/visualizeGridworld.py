@@ -14,7 +14,8 @@ import Gridworld.GridworldVisualizer as GridworldVisualizer
 
 
 # Start training
-agent = randomAgent.randomAgent()
+agent = dynamicProgrammingAgent.dynamicProgrammingAgent()
+# agent = randomAgent.randomAgent()
 gridworld = Gridworld.Gridworld(agent)
 
 visualizer = GridworldVisualizer.GridworldVisualizer(gridworld)
