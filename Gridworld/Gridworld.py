@@ -12,7 +12,7 @@ import random
 class Gridworld():
 
 
-    def __init__(self, agent, gridWidth=20, gridHeight=5):
+    def __init__(self, agent, gridWidth=20, gridHeight=5, numberOfObstacles=20):
         print("New Gridworld")
         self.name = "Gridworld"
 
@@ -24,6 +24,11 @@ class Gridworld():
         # In Gridworld, a state is a coordinate.
         self.startState = self._generateObjectState()
         self.goalState = self._generateObjectState()
+
+        self.numberOfObstacles = numberOfObstacles
+        self.obstacles = []
+        for _ in range(self.numberOfObstacles):
+            self.obstacles.append(self._generateObjectState())
 
         self.agent = agent
 
@@ -39,6 +44,12 @@ class Gridworld():
         return [(xCoord, yCoord) for xCoord in range(self.gridWidth) for yCoord in range(self.gridHeight)]
 
 
+    def emptyStates(self):
+        states = self.states()
+        emptyStates = [state for state in states if (state not in self.obstacles)]
+        return emptyStates
+    
+
     def _transition(self, currentState, action):
     
         nextState = currentState
@@ -52,6 +63,7 @@ class Gridworld():
             nextState = currentState
         if (nextState[1] < 0 or nextState[1] > (self.gridHeight-1)) : # Vertically out of bounds
             nextState = currentState
+        if (nextState in self.obstacles): nextState = currentState # Bounced into obstacle
 
         nextStepProbability = 1 # Deterministic transition
         reward, episodeEnded = self._reward(currentState, nextState)

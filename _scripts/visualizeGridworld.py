@@ -31,14 +31,16 @@ for _ in range(3):
 
 maxSteps = 50
 stepNumber = 0
-episodeEnded = False
-while not(episodeEnded) and (stepNumber <= maxSteps) :
+while (stepNumber <= maxSteps) :
     print(f"\nStep {stepNumber}")
+
     nextState, reward, episodeEnded = gridworld.runOneStep()
 
     imagesGrid.append(visualizer.visualizeGrid())
     imagesV.append(visualizer.visualizeV())
     stepNumber += 1
+
+    if(episodeEnded): gridworld.startEpisode()
 
 for _ in range(3):
     imagesGrid.append(visualizer.visualizeGrid())

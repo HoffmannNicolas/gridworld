@@ -1,6 +1,6 @@
 
 
-
+import math
 from PIL import Image, ImageDraw
 
 
@@ -22,6 +22,8 @@ class GridworldVisualizer():
         self.cellBorderColor = (50, 50, 50)
         
         self.agentColor = (255, 255, 0)
+
+        self.obstacleColor = (100, 50, 50)
         
         self.highestVColor = (0, 255, 0)
         
@@ -38,6 +40,8 @@ class GridworldVisualizer():
         image = self._drawGrid(image)
 
         image = self._drawAgent(image)
+
+        image = self._drawObstacles(image)
         
         return image
 
@@ -55,7 +59,8 @@ class GridworldVisualizer():
         image = self._drawGrid(image)
 
         image = self._drawAgent(image)
-        
+
+        image = self._drawObstacles(image)        
         
         return image
 
@@ -71,6 +76,23 @@ class GridworldVisualizer():
 
         margin = 2
         imageDraw.ellipse((leftCoord+margin, topCoord+margin, rightCoord-margin, bottomCoord-margin), fill=self.agentColor)
+
+        return image
+
+
+    def _drawObstacles(self, image):
+    
+        imageDraw = ImageDraw.Draw(image)
+
+        for obstacleState in self.gridworld.obstacles:
+            leftCoord = obstacleState[0] * self.cellWidth
+            rightCoord = leftCoord + self.cellWidth - 1
+
+            topCoord = obstacleState[1] * self.cellHeight
+            bottomCoord = topCoord + self.cellHeight - 1
+
+            margin = 2
+            imageDraw.ellipse((leftCoord+margin, topCoord+margin, rightCoord-margin, bottomCoord-margin), fill=self.obstacleColor)
 
         return image
 
@@ -141,6 +163,7 @@ class GridworldVisualizer():
             for cellCoordY in range(self.gridworld.gridHeight):
 
                 Vstate = self.gridworld.agent.V((cellCoordX, cellCoordY)) # Vstate := V(state)
+                Vstate = math.log(1 + Vstate)
                 cellColor = tuple([int(a*Vstate + b * (1-Vstate)) for (a, b) in zip(self.highestVColor, self.emptyCellColor)])
 
                 imageDraw.rectangle(

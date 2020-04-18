@@ -67,7 +67,7 @@ class dynamicProgrammingAgent(Agent.Agent):
         # Iterative Policy Evaluation (p.80)
         old_V = copy.deepcopy(self.V)
 
-        for state in environment.states():
+        for state in environment.emptyStates():
             newStateValue = 0
 
             for actionProbability, action in self.policy(state):
@@ -90,7 +90,7 @@ class dynamicProgrammingAgent(Agent.Agent):
         # Iterative Policy Evaluation (p.80)
         old_V = copy.deepcopy(self.V)
 
-        for state in environment.states():
+        for state in environment.emptyStates():
             maxActionValue = -1
 
             for action in environment.possibleActions(state):
@@ -107,7 +107,7 @@ class dynamicProgrammingAgent(Agent.Agent):
 
 
     def _computeGreedyPolicy(self, environment):
-        for state in environment.states():
+        for state in environment.emptyStates():
 
             highestReturnAction = None
             highestReturnAction_value = None
