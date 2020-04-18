@@ -15,7 +15,7 @@ class V():
         self.V = {}
         for state in environment.states():
             if not(isinstance(state, str)): state = str(state)
-            self.V[state] = random.random()
+            self.V[state] = random.random() * 0.1
 
 
     def setValue(self, state, value):

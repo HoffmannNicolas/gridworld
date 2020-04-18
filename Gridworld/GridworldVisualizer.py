@@ -23,9 +23,11 @@ class GridworldVisualizer():
         
         self.agentColor = (255, 255, 0)
         
+        self.highestVColor = (0, 255, 0)
+        
 
 
-    def draw(self):
+    def visualizeGrid(self):
 
         image = Image.new(
             'RGB', 
@@ -40,10 +42,27 @@ class GridworldVisualizer():
         return image
 
 
+
+    def visualizeV(self):
+
+        image = Image.new(
+            'RGB', 
+            (self.gridworld.gridWidth * self.cellWidth, self.gridworld.gridHeight * self.cellHeight), 
+            self.emptyCellColor
+        )
+        image = self._drawV(image)
+
+        image = self._drawGrid(image)
+
+        image = self._drawAgent(image)
+        
+        
+        return image
+
+
     def _drawAgent(self, image):
     
         imageDraw = ImageDraw.Draw(image)
-
         leftCoord = self.gridworld.agent.state[0] * self.cellWidth
         rightCoord = leftCoord + self.cellWidth - 1
 
@@ -51,11 +70,12 @@ class GridworldVisualizer():
         bottomCoord = topCoord + self.cellHeight - 1
 
         margin = 2
+        print("Agent ellipse : ", leftCoord+margin, topCoord+margin, rightCoord-margin, bottomCoord-margin)
         imageDraw.ellipse((leftCoord+margin, topCoord+margin, rightCoord-margin, bottomCoord-margin), fill=self.agentColor)
 
         return image
 
-        
+
     def _drawGrid(self, image):
 
         imageDraw = ImageDraw.Draw(image)
@@ -108,6 +128,28 @@ class GridworldVisualizer():
                     [(cellCoordX * self.cellWidth, (cellCoordY+1) * self.cellHeight - 1), (cellCoordX * self.cellWidth, cellCoordY * self.cellHeight)], 
                     fill = self.cellBorderColor, 
                     width = 0
+                )
+
+        return image
+
+
+    def _drawV(self, image):
+
+        imageDraw = ImageDraw.Draw(image)
+
+        # Draw V levels
+        for cellCoordX in range(self.gridworld.gridWidth):
+            for cellCoordY in range(self.gridworld.gridHeight):
+
+                Vstate = self.gridworld.agent.V((cellCoordX, cellCoordY)) # Vstate := V(state)
+                cellColor = tuple([int(a*Vstate + b * (1-Vstate)) for (a, b) in zip(self.highestVColor, self.emptyCellColor)])
+
+                imageDraw.rectangle(
+                    [
+                        (cellCoordX * self.cellWidth, cellCoordY * self.cellHeight), 
+                        ((cellCoordX+1) * self.cellWidth-1, (cellCoordY+1) * self.cellHeight-1), 
+                    ], 
+                    cellColor
                 )
 
         return image

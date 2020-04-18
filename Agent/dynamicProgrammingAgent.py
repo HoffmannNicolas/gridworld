@@ -33,7 +33,6 @@ class dynamicProgrammingAgent(Agent.Agent):
             print(f"[{self.name}] : Policy set up")
 
 
-
     def choseAction(self, environment):
         actionDistribution = sorted(self.policy(self.state), key=lambda x : x[1]) # Sort action distribution
         action = actionDistribution[0] # Select most probable action
