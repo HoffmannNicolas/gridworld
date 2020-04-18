@@ -7,6 +7,7 @@ class Agent():
 
     def __init__(self):
         print("New agent created")
+        self.state = None
 
     @abstractmethod
     def onEpisodeStart(self): pass

@@ -44,10 +44,10 @@ class GridworldVisualizer():
     
         imageDraw = ImageDraw.Draw(image)
 
-        leftCoord = self.gridworld.agent.coord[0] * self.cellWidth
+        leftCoord = self.gridworld.agent.state[0] * self.cellWidth
         rightCoord = leftCoord + self.cellWidth - 1
 
-        topCoord = self.gridworld.agent.coord[1] * self.cellHeight
+        topCoord = self.gridworld.agent.state[1] * self.cellHeight
         bottomCoord = topCoord + self.cellHeight - 1
 
         margin = 2
@@ -61,9 +61,9 @@ class GridworldVisualizer():
         imageDraw = ImageDraw.Draw(image)
 
         # Draw start cell
-        startCellLeftCoord = self.gridworld.startCoord[0] * self.cellWidth
+        startCellLeftCoord = self.gridworld.startState[0] * self.cellWidth
         startCellRightCoord = startCellLeftCoord + self.cellWidth - 1
-        startCellTopCoord = self.gridworld.startCoord[1] * self.cellHeight
+        startCellTopCoord = self.gridworld.startState[1] * self.cellHeight
         startCellBottomCoord = startCellTopCoord + self.cellWidth - 1
         imageDraw.rectangle(
             [
@@ -74,9 +74,9 @@ class GridworldVisualizer():
         )
 
         # Draw goal cell
-        goalCellLeftCoord = self.gridworld.goalCoord[0] * self.cellWidth
+        goalCellLeftCoord = self.gridworld.goalState[0] * self.cellWidth
         goalCellRightCoord = goalCellLeftCoord + self.cellWidth - 1
-        goalCellTopCoord = self.gridworld.goalCoord[1] * self.cellHeight
+        goalCellTopCoord = self.gridworld.goalState[1] * self.cellHeight
         goalCellBottomCoord = goalCellTopCoord + self.cellWidth - 1
         imageDraw.rectangle(
             [

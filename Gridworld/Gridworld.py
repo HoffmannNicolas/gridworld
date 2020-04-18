@@ -21,38 +21,47 @@ class Gridworld():
 
         self.grid = np.zeros((self.gridHeight, self.gridWidth), dtype=int)
 
-        self.startCoord = self._generateObjectCoord()
-        self.goalCoord = self._generateObjectCoord()
+        # In Gridworld, a state is a coordinate.
+        self.startState = self._generateObjectState()
+        self.goalState = self._generateObjectState()
 
         self.agent = agent
 
         self.episodeIsRunning = False
 
 
-    def _generateObjectCoord(self):
+    def _generateObjectState(self):
         return (random.randint(0, self.gridWidth-1), # X-coord
             random.randint(0, self.gridHeight-1)) # Y-coord
 
 
-    def _transition(self, currentCoord, action):
-        nextCoord = currentCoord
+    def states(self):
+        return [(xCoord, yCoord) for xCoord in range(self.gridWidth) for yCoord in range(self.gridHeight)]
+
+
+    def _transition(self, currentState, action):
+        nextState = currentState
             # Apply transition without constraints
-        if (action == "UP") : nextCoord = (nextCoord[0], nextCoord[1]-1)
-        if (action == "DOWN") : nextCoord = (nextCoord[0], nextCoord[1]+1)
-        if (action == "LEFT") : nextCoord = (nextCoord[0]-1, nextCoord[1])
-        if (action == "RIGHT") : nextCoord = (nextCoord[0]+1, nextCoord[1])
+        if (action == "UP") : nextState = (nextState[0], nextState[1]-1)
+        if (action == "DOWN") : nextState = (nextState[0], nextState[1]+1)
+        if (action == "LEFT") : nextState = (nextState[0]-1, nextState[1])
+        if (action == "RIGHT") : nextState = (nextState[0]+1, nextState[1])
             # Apply constraints
-        if (nextCoord[0] < 0 or nextCoord[0] > (self.gridWidth-1)) : # Horizontally out of bounds
-            nextCoord = currentCoord
-        if (nextCoord[1] < 0 or nextCoord[1] > (self.gridHeight-1)) : # Vertically out of bounds
-            nextCoord = currentCoord
-        return nextCoord
+        if (nextState[0] < 0 or nextState[0] > (self.gridWidth-1)) : # Horizontally out of bounds
+            nextState = currentState
+        if (nextState[1] < 0 or nextState[1] > (self.gridHeight-1)) : # Vertically out of bounds
+            nextState = currentState
+        
+        nextStepProbability = 1 # Deterministic transition
+        reward, episodeEnded = self._reward(currentState, nextState)
+
+        return [(nextState, nextStepProbability, reward, episodeEnded)] # Returns a list of all possible next steps
 
 
-    def _reward(self, currentCoord, nextCoord):
+    def _reward(self, currentState, nextState):
         nextReward = 0
         episodeEnded = False
-        if (currentCoord != self.goalCoord and nextCoord == self.goalCoord):
+        if (currentState != self.goalState and nextState == self.goalState):
             nextReward = 1
             episodeEnded = True
         return nextReward, episodeEnded
@@ -60,8 +69,8 @@ class Gridworld():
 
     def startEpisode(self):
         print(f"[{self.name}] : New episode started !")
-        self.agent.coord = self.startCoord
-        self.agent.onEpisodeStart()
+        self.agent.state = self.startState
+        self.agent.onEpisodeStart(self)
         self.episodeIsRunning = True
 
 
@@ -71,7 +80,7 @@ class Gridworld():
         self.agent.onEpisodeEnd()
 
 
-    def _possibleActions(self):
+    def possibleActions(self, state):
         return ("UP", "DOWN", "LEFT", "RIGHT")
 
 
@@ -80,21 +89,18 @@ class Gridworld():
             print(f"[{self.name}] : No episode Running : start one with gridworld.startEpisode()")
             return
 
-        possibleActions = self._possibleActions()
+        agentAction = self.agent.choseAction(self)
+        currentState = self.agent.state
 
-        agentAction = self.agent.choseAction(possibleActions)
-        currentCoord = self.agent.coord
+        nextState, nextStateProbability, reward, episodeEnded = self._transition(currentState, agentAction)[0] # Gridworld deterministic : Only one poccible next step
 
-        nextCoord = self._transition(currentCoord, agentAction)
-        reward, episodeEnded = self._reward(currentCoord, nextCoord)
+        self.agent.state = nextState
 
-        self.agent.coord = nextCoord
-
-        self.agent.onTransition()
+        self.agent.onTransition(self)
 
         if (episodeEnded) : self.endEpisode()
 
-        return nextCoord, reward, episodeEnded
+        return nextState, reward, episodeEnded
 
 
     def runOneEpisode(self):

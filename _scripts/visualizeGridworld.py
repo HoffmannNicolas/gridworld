@@ -7,6 +7,8 @@ sourcePath = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(sourcePath)
 
 import Agent.randomAgent as randomAgent
+import Agent.dynamicProgrammingAgent as dynamicProgrammingAgent
+
 import Gridworld.Gridworld as Gridworld
 import Gridworld.GridworldVisualizer as GridworldVisualizer
 
@@ -29,7 +31,7 @@ stepNumber = 0
 episodeEnded = False
 while not(episodeEnded) and (stepNumber <= maxSteps) :
     print(f"\nStep {stepNumber}")
-    nextCoord, reward, episodeEnded = gridworld.runOneStep()
+    nextState, reward, episodeEnded = gridworld.runOneStep()
 
     images.append(visualizer.draw())
     stepNumber += 1
