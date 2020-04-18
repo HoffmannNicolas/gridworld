@@ -37,18 +37,14 @@ class dynamicProgrammingAgent(Agent.Agent):
         actionDistribution = sorted(self.policy(self.state), key=lambda x : x[1]) # Sort action distribution
         action = actionDistribution[0] # Select most probable action
         action = action[0] # (action, probability) -> action
-
-        print(f"[{self.name}] State {self.state}")
         print(f"[{self.name}] Action {action} chosen !")
         return action
 
 
     def onTransition(self, environment):
 
-        print(f"[{self.name}] State {self.state}")
-
-        self._policyEvaluation(environment)
-        print(f"[{self.name}] : Policy Evaluation done.")
+        self._valueIteration(environment)
+        print(f"[{self.name}] : Value Iteration done.")
 
 
         """
@@ -64,7 +60,7 @@ class dynamicProgrammingAgent(Agent.Agent):
         """
 
         self._computeGreedyPolicy(environment)
-        print(f"[{self.name}] : Policy Improvement done.")
+        print(f"[{self.name}] : Greedy Policy computed.")
 
 
     def _policyEvaluation(self, environment):
@@ -78,12 +74,36 @@ class dynamicProgrammingAgent(Agent.Agent):
                 actionValue = 0
 
                 for nextState, nextStatesProbability, nextReward, _ in environment._transition(state, action): # episodeEnded is discarted
+                    print("nextState, nextStatesProbability, nextReward, _ : ", nextState, nextStatesProbability, nextReward, _)
+                    if (nextReward != 0) : print("Policy Eval : nextReward = ", nextReward)
+                    exit()
                     transitionValue = nextReward + self.gamma * old_V(nextState)
                     actionValue += transitionValue * nextStatesProbability
 
                 newStateValue += actionValue
+                if (newStateValue > 1) : print("newStateValue : ", newStateValue)
 
             self.V.setValue(state, newStateValue)
+
+
+    def _valueIteration(self, environment):
+        # Iterative Policy Evaluation (p.80)
+        old_V = copy.deepcopy(self.V)
+
+        for state in environment.states():
+            maxActionValue = -1
+
+            for action in environment.possibleActions(state):
+                actionValue = 0
+
+                for nextState, nextStatesProbability, nextReward, _ in environment._transition(state, action): # episodeEnded is discarted
+                    transitionValue = nextReward + self.gamma * old_V(nextState)
+                    actionValue += transitionValue
+
+                maxActionValue = max(actionValue, maxActionValue)
+                actionValue = 0
+
+            self.V.setValue(state, maxActionValue)
 
 
     def _computeGreedyPolicy(self, environment):

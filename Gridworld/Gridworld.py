@@ -41,7 +41,6 @@ class Gridworld():
 
     def _transition(self, currentState, action):
     
-
         nextState = currentState
             # Apply transition without constraints
         if (action == "UP") : nextState = (nextState[0], nextState[1]-1)
@@ -53,10 +52,10 @@ class Gridworld():
             nextState = currentState
         if (nextState[1] < 0 or nextState[1] > (self.gridHeight-1)) : # Vertically out of bounds
             nextState = currentState
-        
+
         nextStepProbability = 1 # Deterministic transition
         reward, episodeEnded = self._reward(currentState, nextState)
-
+        
         return [(nextState, nextStepProbability, reward, episodeEnded)] # Returns a list of all possible next steps
 
 
@@ -95,8 +94,6 @@ class Gridworld():
         currentState = self.agent.state
 
         nextState, nextStateProbability, reward, episodeEnded = self._transition(currentState, agentAction)[0] # Gridworld deterministic : Only one poccible next step
-
-        print("nextState, nextStateProbability, reward, episodeEnded : ", nextState, nextStateProbability, reward, episodeEnded)
 
         self.agent.state = nextState
 

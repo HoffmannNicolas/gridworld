@@ -70,7 +70,6 @@ class GridworldVisualizer():
         bottomCoord = topCoord + self.cellHeight - 1
 
         margin = 2
-        print("Agent ellipse : ", leftCoord+margin, topCoord+margin, rightCoord-margin, bottomCoord-margin)
         imageDraw.ellipse((leftCoord+margin, topCoord+margin, rightCoord-margin, bottomCoord-margin), fill=self.agentColor)
 
         return image
