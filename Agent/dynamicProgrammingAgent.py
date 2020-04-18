@@ -10,7 +10,7 @@ import Agent.V as V
 
 class dynamicProgrammingAgent(Agent.Agent):
 
-    def __init__(self, gamma=0.9):
+    def __init__(self, gamma=0.8):
         print("New dynamicProgramming Agent")
         self.name = "dynamicProgrammingAgent"
 
@@ -126,7 +126,7 @@ class dynamicProgrammingAgent(Agent.Agent):
                     highestReturnAction = action
                     highestReturnAction_value = actionValue
 
-            self.policy.setValue(state, [(action, 1)]) # Policy requires [(action, actionProbability)]
+            self.policy.setValue(state, [(highestReturnAction, 1)]) # Policy requires [(action, actionProbability)]
 
 
     def onEpisodeEnd(self):

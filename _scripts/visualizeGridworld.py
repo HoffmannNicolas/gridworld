@@ -29,7 +29,7 @@ for _ in range(3):
     imagesGrid.append(visualizer.visualizeGrid())
     imagesV.append(visualizer.visualizeV())
 
-maxSteps = 20
+maxSteps = 50
 stepNumber = 0
 episodeEnded = False
 while not(episodeEnded) and (stepNumber <= maxSteps) :
