@@ -15,8 +15,9 @@ class Agent():
         self.Q = None # Value-function of (state-action) paires
         self.policy = None # PI, policy : {State} -> {Action}
 
-        self.gamma = None
+        self.gamma = None # Explonential temporal decay
         self.epsilon = None # Used for epsilon-greedy action selection
+        self.alpha = None # Learning rate
 
     @abstractmethod
     def onEpisodeStart(self): pass
@@ -26,7 +27,7 @@ class Agent():
     def choseAction(self, possibleActions): pass
 
     @abstractmethod
-    def onTransition(self): pass
+    def onTransition(self, previousState, action, nextState, reward, environment): pass
         # Computations after the environment computed the transition (some agents update their value-function or policy)
 
     @abstractmethod

@@ -36,7 +36,7 @@ class Agent_dynamicProgramming(Agent.Agent):
         else: return self._epsilonGreedyActionFromPolicy(environment, verbose=True)
 
 
-    def onTransition(self, previousState, action, newState, reward, environment):
+    def onTransition(self, previousState, action, nextState, reward, environment):
         self._valueIteration(environment)
         print(f"[{self.name}] : Value Iteration done")
 

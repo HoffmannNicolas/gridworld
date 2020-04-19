@@ -9,6 +9,7 @@ sys.path.append(sourcePath)
 import Agent.Agent_random as Agent_random
 import Agent.Agent_dynamicProgramming as Agent_dynamicProgramming
 import Agent.Agent_MC_FirstVisit_V as Agent_MC_FirstVisit_V
+import Agent.Agent_nStepTD_V as Agent_nStepTD_V
 
 import Gridworld.Gridworld as Gridworld
 import Gridworld.GridworldVisualizer as GridworldVisualizer
@@ -16,10 +17,11 @@ import Gridworld.GridworldVisualizer as GridworldVisualizer
 
 # Start training
 # agent = Agent_random.Agent_random()
-agent = Agent_dynamicProgramming.Agent_dynamicProgramming(epsilon=0.8)
+# agent = Agent_dynamicProgramming.Agent_dynamicProgramming(epsilon=0.8)
 # agent = Agent_MC_FirstVisit_V.Agent_MC_FirstVisit_V(epsilon=0.8)
+agent = Agent_nStepTD_V.Agent_nStepTD_V(numberOfSteps=1, epsilon=0.8, alpha=0.3)
 
-gridworld = Gridworld.Gridworld(agent, gridWidth=5, gridHeight=5, numberOfObstacles=5)
+gridworld = Gridworld.Gridworld(agent, gridWidth=10, gridHeight=5, numberOfObstacles=10)
 
 visualizer = GridworldVisualizer.GridworldVisualizer(gridworld)
 
@@ -32,7 +34,7 @@ for _ in range(3):
     imagesGrid.append(visualizer.visualizeGrid())
     imagesV.append(visualizer.visualizeV())
 
-maxSteps = 200
+maxSteps = 500
 stepNumber = 0
 episodeEnded = False
 while (stepNumber < maxSteps) :

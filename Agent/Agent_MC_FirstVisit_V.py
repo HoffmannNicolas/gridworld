@@ -48,7 +48,7 @@ class Agent_MC_FirstVisit_V(Agent.Agent):
         else: return self._epsilonGreedyActionFromPolicy(environment, verbose=True)
 
 
-    def onTransition(self, previousState, action, newState, reward, environment):
+    def onTransition(self, previousState, action, nextState, reward, environment):
         self.episode.append((previousState, action, reward))
         print(f"[{self.name}] Step recorded !")
 
