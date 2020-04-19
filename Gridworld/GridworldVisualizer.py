@@ -17,7 +17,7 @@ class GridworldVisualizer():
         self.emptyCellColor = (100, 100, 100)
         self.wallColor = (100, 100, 100)
         self.startColor = (50, 50, 255)
-        self.goalColor = (50, 255, 50)
+        self.goalColor = (150, 255, 150)
         
         self.cellBorderColor = (50, 50, 50)
         

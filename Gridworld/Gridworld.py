@@ -28,7 +28,10 @@ class Gridworld():
         self.numberOfObstacles = numberOfObstacles
         self.obstacles = []
         for _ in range(self.numberOfObstacles):
-            self.obstacles.append(self._generateObjectState())
+            obstacleCoord = self._generateObjectState()
+            if (obstacleCoord != self.startState and obstacleCoord != self.goalState) :
+                # TODO : Also check if a path still exists from startState to goalState
+                self.obstacles.append(obstacleCoord)
 
         self.agent = agent
 
@@ -103,10 +106,9 @@ class Gridworld():
             return
 
         agentAction = self.agent.choseAction(self)
+
         currentState = self.agent.state
-
         nextState, nextStateProbability, reward, episodeEnded = self._transition(currentState, agentAction)[0] # Gridworld deterministic : Only one poccible next step
-
         self.agent.state = nextState
 
         self.agent.onTransition(self)
@@ -119,7 +121,7 @@ class Gridworld():
     def runOneEpisode(self):
         if not(self.episodeIsRunning):
             self.startEpisode()
-
+        
         episodeEnded = False
         while (episodeEnded == False) :
             _, _, episodeEnded = self.runOneStep()
@@ -130,6 +132,6 @@ class Gridworld():
 
 
     def runFullTraining(self):
-        # TODO : Keep running episodes until convergence of training
+        # TODO : Keep running episodes until convergence of policy
         for _ in range(10): self.runOneEpisode()
 

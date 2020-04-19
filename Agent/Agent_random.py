@@ -7,9 +7,10 @@ import Agent.Policy as Policy
 import Agent.V as V
 
 
-class randomAgent(Agent.Agent):
+class Agent_random(Agent.Agent):
 
     def __init__(self):
+        super().__init__()
         print("New Random Agent")
         self.name = "RandomAgent"
 

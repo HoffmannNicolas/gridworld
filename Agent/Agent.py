@@ -1,27 +1,100 @@
 
 
 from abc import abstractmethod
+import copy
 
 
 class Agent():
 
     def __init__(self):
         print("New agent created")
+
         self.state = None
+        self.V = None # Value-function of the states
+        self.Q = None # Value-function of (state-action) paires
+        self.policy = None # PI, policy : {State} -> {Action}
+
+        self.gamma = None
 
     @abstractmethod
     def onEpisodeStart(self): pass
-        # Set-up the ressources specific for an episode
+        # Set-up ressources specific for an episode
 
     @abstractmethod
     def choseAction(self, possibleActions): pass
-        # Select chosen action to the environment
 
     @abstractmethod
     def onTransition(self): pass
-        # Computations after an action has been chosen and the environment computed the transition
+        # Computations after the environment computed the transition (some agents update their value-function or policy)
 
     @abstractmethod
     def onEpisodeEnd(self): pass
-        # Computations of the end of an episode
+        # Computations at the end of an episode (some agent update their value-function or policy)
+
+
+    def _computeGreedyPolicy(self, environment):
+        # "Reinforcement Learning, An Introduction" Second edition, Sutton & Barto (p.80 "Policy Improvement")
+        for state in environment.emptyStates():
+
+            highestReturnAction = None
+            highestReturnAction_value = None
+
+            for action in environment.possibleActions(state):
+                actionValue = 0
+
+                for nextState, nextStatesProbability, nextReward, _ in environment._transition(state, action): # episodeEnded is discarted
+                    transitionValue = nextReward + self.gamma * self.V(nextState)
+                    actionValue += transitionValue * nextStatesProbability
+
+                if (highestReturnAction is None):
+                    highestReturnAction = action
+                    highestReturnAction_value = actionValue
+                elif (actionValue > highestReturnAction_value):
+                    highestReturnAction = action
+                    highestReturnAction_value = actionValue
+
+            self.policy.setValue(state, [(highestReturnAction, 1)]) # Policy requires [(action, actionProbability)]
+
+
+    def _valueIteration(self, environment):
+        # "Reinforcement Learning, An Introduction" Second edition, Sutton & Barto (p.83)
+        old_V = copy.deepcopy(self.V)
+
+        for state in environment.emptyStates():
+            maxActionValue = -1
+
+            for action in environment.possibleActions(state):
+                actionValue = 0
+
+                for nextState, nextStatesProbability, nextReward, _ in environment._transition(state, action): # episodeEnded is discarted
+                    transitionValue = nextReward + self.gamma * old_V(nextState)
+                    actionValue += transitionValue
+
+                maxActionValue = max(actionValue, maxActionValue)
+                actionValue = 0
+
+            self.V.setValue(state, maxActionValue)
+
+
+    def _policyEvaluation(self, environment):
+        # "Reinforcement Learning, An Introduction" Second edition, Sutton & Barto (p.80, "Policy Evaluation")
+        old_V = copy.deepcopy(self.V)
+
+        for state in environment.emptyStates():
+            newStateValue = 0
+
+            for actionProbability, action in self.policy(state):
+                actionValue = 0
+
+                for nextState, nextStatesProbability, nextReward, _ in environment._transition(state, action): # episodeEnded is discarted
+                    print("nextState, nextStatesProbability, nextReward, _ : ", nextState, nextStatesProbability, nextReward, _)
+                    if (nextReward != 0) : print("Policy Eval : nextReward = ", nextReward)
+                    exit()
+                    transitionValue = nextReward + self.gamma * old_V(nextState)
+                    actionValue += transitionValue * nextStatesProbability
+
+                newStateValue += actionValue
+                if (newStateValue > 1) : print("newStateValue : ", newStateValue)
+
+            self.V.setValue(state, newStateValue)
 
