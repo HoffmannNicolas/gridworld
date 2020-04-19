@@ -12,7 +12,7 @@ import random
 class Gridworld():
 
 
-    def __init__(self, agent, gridWidth=20, gridHeight=5, numberOfObstacles=20):
+    def __init__(self, agent, gridWidth=20, gridHeight=5, numberOfObstacles=20, exploringStates=False):
         print("New Gridworld")
         self.name = "Gridworld"
 
@@ -22,7 +22,10 @@ class Gridworld():
         self.grid = np.zeros((self.gridHeight, self.gridWidth), dtype=int)
 
         # In Gridworld, a state is a coordinate.
+
+        self.exploringStates = exploringStates
         self.startState = self._generateObjectState()
+
         self.goalState = self._generateObjectState()
 
         self.numberOfObstacles = numberOfObstacles
@@ -83,26 +86,32 @@ class Gridworld():
         return nextReward, episodeEnded
 
 
-    def startEpisode(self):
-        print(f"[{self.name}] : New episode started !")
+    def startEpisode(self, verbose=False):
+        if (verbose): print(f"[{self.name}] : New episode started !")
+        if (self.exploringStates):
+            stateIsBlocked = True
+            while (stateIsBlocked):
+                self.startState = self._generateObjectState()
+                stateIsBlocked = self.startState in self.obstacles
         self.agent.state = self.startState
+
         self.agent.onEpisodeStart(self)
         self.episodeIsRunning = True
 
 
-    def endEpisode(self):
-        print(f"[{self.name}] : Episode ended")
+    def endEpisode(self, verbose=False):
+        if (verbose): print(f"[{self.name}] : Episode ended")
         self.episodeIsRunning = False
-        self.agent.onEpisodeEnd(self)
+        self.agent.onEpisodeEnd(self, verbose=verbose)
 
 
     def possibleActions(self, state):
         return ("UP", "DOWN", "LEFT", "RIGHT")
 
 
-    def runOneStep(self):
+    def runOneStep(self, verbose=False):
         if (self.episodeIsRunning == False):
-            print(f"[{self.name}] : No episode Running : start one with gridworld.startEpisode()")
+            if (verbose): print(f"[{self.name}] : No episode Running : start one with gridworld.startEpisode()")
             return
 
         agentAction = self.agent.choseAction(self)
@@ -113,22 +122,26 @@ class Gridworld():
 
         self.agent.onTransition(currentState, agentAction, nextState, reward, self)
 
-        if (episodeEnded) : self.endEpisode()
+        if (episodeEnded) : self.endEpisode(verbose=verbose)
 
         return nextState, reward, episodeEnded
 
 
-    def runOneEpisode(self):
+    def runOneEpisode(self, verbose=False):
         if not(self.episodeIsRunning):
-            self.startEpisode()
+            self.startEpisode(verbose=verbose)
         
+        stepNumber = 0
+        maxStep = 10000
         episodeEnded = False
         while (episodeEnded == False) :
-            _, _, episodeEnded = self.runOneStep()
+            _, _, episodeEnded = self.runOneStep(verbose=verbose)
+            stepNumber += 1
+            if (stepNumber >= maxStep): episodeEnded = True
 
-        self.endEpisode()
+        self.endEpisode(verbose=verbose)
 
-        return
+        return stepNumber
 
 
     def runFullTraining(self):

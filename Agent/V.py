@@ -14,11 +14,17 @@ class V():
 
         self.V = {}
         for state in environment.states():
-            if not(isinstance(state, str)): state = str(state)
+
+            state_str = state
+            if not(isinstance(state_str, str)): state_str = str(state_str)
+
+            if (state in environment.obstacles):
+                self.V[state_str] = 0
+                continue
 
             # Unless otherwise specified, V is uniformely defined in [0, 0.1]
-            if (initialValue is None): self.V[state] = random.random() * 0.1
-            else: self.V[state] = initialValue
+            if (initialValue is None): self.V[state_str] = random.random() * 0.1
+            else: self.V[state_str] = initialValue
 
 
     def setValue(self, state, value):

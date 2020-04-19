@@ -163,7 +163,8 @@ class GridworldVisualizer():
             for cellCoordY in range(self.gridworld.gridHeight):
 
                 Vstate = self.gridworld.agent.V((cellCoordX, cellCoordY)) # Vstate := V(state)
-                Vstate = math.log(1 + Vstate)
+                # Vstate = math.log(1 + Vstate)
+                Vstate = math.sqrt(Vstate)
                 cellColor = tuple([int(a*Vstate + b * (1-Vstate)) for (a, b) in zip(self.highestVColor, self.emptyCellColor)])
 
                 imageDraw.rectangle(

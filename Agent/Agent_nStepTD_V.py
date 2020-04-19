@@ -25,7 +25,7 @@ class Agent_nStepTD_V(Agent.Agent):
         self.name = self.name + f"_alpha{self.alpha}"
 
 
-    def onEpisodeStart(self, environment):
+    def onEpisodeStart(self, environment, verbose=False):
         if (self.V == None):
             self.V = V.V(environment)
             print(f"[{self.name}] : V set up")
@@ -36,12 +36,12 @@ class Agent_nStepTD_V(Agent.Agent):
             print(f"[{self.name}] : Policy set up")
 
 
-    def choseAction(self, environment):
+    def choseAction(self, environment, verbose=False):
         if (self.epsilon == 1): return self._sampleActionFromPolicy(environment, verbose=self.verbose)
         else: return self._epsilonGreedyActionFromPolicy(environment, verbose=self.verbose)
 
 
-    def onTransition(self, previousState, action, nextState, reward, environment):
+    def onTransition(self, previousState, action, nextState, reward, environment, verbose=False):
         # "Reinforcement Learning, An Introduction" Second edition, Sutton & Barto (p.120 6.2)
 
         valueError = reward + self.gamma * self.V(nextState) - self.V(previousState)
@@ -53,6 +53,6 @@ class Agent_nStepTD_V(Agent.Agent):
         if (self.verbose): print(f"[{self.name}] : Policy updated !")
 
 
-    def onEpisodeEnd(self, environment):
-        print(f"[{self.name}] : No process after episode")
+    def onEpisodeEnd(self, environment, verbose=False):
+        if (verbose): print(f"[{self.name}] : No process after episode")
 

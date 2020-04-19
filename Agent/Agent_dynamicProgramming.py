@@ -19,7 +19,7 @@ class Agent_dynamicProgramming(Agent.Agent):
         if (self.epsilon < 1): self.name = self.name + f"_eps{self.epsilon}"
 
 
-    def onEpisodeStart(self, environment):
+    def onEpisodeStart(self, environment, verbose=False):
         if (self.V == None):
             self.V = V.V(environment)
             self.V.setValue(environment.goalState, 0)
@@ -31,12 +31,12 @@ class Agent_dynamicProgramming(Agent.Agent):
             print(f"[{self.name}] : Policy set up")
 
 
-    def choseAction(self, environment):
+    def choseAction(self, environment, verbose=False):
         if (self.epsilon == 1): return self._sampleActionFromPolicy(environment, verbose=True)
         else: return self._epsilonGreedyActionFromPolicy(environment, verbose=True)
 
 
-    def onTransition(self, previousState, action, nextState, reward, environment):
+    def onTransition(self, previousState, action, nextState, reward, environment, verbose=False):
         self._valueIteration(environment)
         print(f"[{self.name}] : Value Iteration done")
 
@@ -45,6 +45,6 @@ class Agent_dynamicProgramming(Agent.Agent):
         print(f"[{self.name}] : Greedy Policy computed")
 
 
-    def onEpisodeEnd(self, previousEpisodesStates):
+    def onEpisodeEnd(self, previousEpisodesStates, verbose=False):
         print(f"[{self.name}] : Nothing to do at the end of an episode")
 

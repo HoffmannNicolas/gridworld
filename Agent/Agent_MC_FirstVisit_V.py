@@ -22,39 +22,38 @@ class Agent_MC_FirstVisit_V(Agent.Agent):
         if (self.epsilon < 1): self.name = self.name + f"_eps{self.epsilon}"
 
 
-    def onEpisodeStart(self, environment):
+    def onEpisodeStart(self, environment, verbose=False):
         if (self.V == None):
             self.V = V.V(environment, initialValue=0)
-            print(f"[{self.name}] : V set up")
+            if (verbose): print(f"[{self.name}] : V set up")
 
         if (self.policy == None):
             self.policy = Policy.Policy(environment)
             self._computeGreedyPolicy(environment)
-            print(f"[{self.name}] : Policy set up")
+            if (verbose): print(f"[{self.name}] : Policy set up")
 
         if (self.returns == None):
             self.returns = {}
             for state in environment.states():
                 if not(isinstance(state, str)): state = str(state)
                 self.returns[state] = []
-            print(f"[{self.name}] : Returns set up")
+            if (verbose): print(f"[{self.name}] : Returns set up")
 
         self.episode = []
-        print(f"[{self.name}] : Ready to record a new episode")
+        if (verbose): print(f"[{self.name}] : Ready to record a new episode")
 
 
-    def choseAction(self, environment):
-        if (self.epsilon == 1): return self._sampleActionFromPolicy(environment, verbose=True)
-        else: return self._epsilonGreedyActionFromPolicy(environment, verbose=True)
+    def choseAction(self, environment, verbose=False):
+        if (self.epsilon == 1): return self._sampleActionFromPolicy(environment, verbose=verbose)
+        else: return self._epsilonGreedyActionFromPolicy(environment, verbose=verbose)
 
 
-    def onTransition(self, previousState, action, nextState, reward, environment):
+    def onTransition(self, previousState, action, nextState, reward, environment, verbose=False):
         self.episode.append((previousState, action, reward))
-        print(f"[{self.name}] Step recorded !")
+        if (verbose): print(f"[{self.name}] Step recorded !")
 
 
-    def onEpisodeEnd(self, environment):
-        print("self.episode : ", self.episode)
+    def onEpisodeEnd(self, environment, verbose=False):
 
         previousEpisodesStates = [state for state, action, reward in self.episode]
         G = 0
@@ -66,9 +65,9 @@ class Agent_MC_FirstVisit_V(Agent.Agent):
                 self.returns[str(state)].append(G)
                 averageG = sum(self.returns[str(state)]) / len(self.returns[str(state)])
                 self.V.setValue(state, averageG) 
-        print(f"[{self.name}] V updated !")
+        if (verbose): print(f"[{self.name}] V updated !")
 
         self._computeGreedyPolicy(environment)
-        print(f"[{self.name}] Policy updated !")
+        if (verbose): print(f"[{self.name}] Policy updated !")
 
 
