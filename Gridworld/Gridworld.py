@@ -93,7 +93,7 @@ class Gridworld():
     def endEpisode(self):
         print(f"[{self.name}] : Episode ended")
         self.episodeIsRunning = False
-        self.agent.onEpisodeEnd()
+        self.agent.onEpisodeEnd(self)
 
 
     def possibleActions(self, state):
@@ -111,7 +111,7 @@ class Gridworld():
         nextState, nextStateProbability, reward, episodeEnded = self._transition(currentState, agentAction)[0] # Gridworld deterministic : Only one poccible next step
         self.agent.state = nextState
 
-        self.agent.onTransition(self)
+        self.agent.onTransition(currentState, agentAction, nextState, reward, self)
 
         if (episodeEnded) : self.endEpisode()
 

@@ -28,7 +28,7 @@ class Agent():
         # Computations after the environment computed the transition (some agents update their value-function or policy)
 
     @abstractmethod
-    def onEpisodeEnd(self): pass
+    def onEpisodeEnd(self, previousEpisodesStates): pass
         # Computations at the end of an episode (some agent update their value-function or policy)
 
 
@@ -36,8 +36,8 @@ class Agent():
         # "Reinforcement Learning, An Introduction" Second edition, Sutton & Barto (p.80 "Policy Improvement")
         for state in environment.emptyStates():
 
-            highestReturnAction = None
-            highestReturnAction_value = None
+            highestReturnActions = []
+            highestReturnActions_value = None
 
             for action in environment.possibleActions(state):
                 actionValue = 0
@@ -46,14 +46,17 @@ class Agent():
                     transitionValue = nextReward + self.gamma * self.V(nextState)
                     actionValue += transitionValue * nextStatesProbability
 
-                if (highestReturnAction is None):
-                    highestReturnAction = action
-                    highestReturnAction_value = actionValue
-                elif (actionValue > highestReturnAction_value):
-                    highestReturnAction = action
-                    highestReturnAction_value = actionValue
+                if (len(highestReturnActions) == 0):
+                    highestReturnActions = [action]
+                    highestReturnActions_value = actionValue
+                elif (actionValue > highestReturnActions_value):
+                    highestReturnActions = [action]
+                    highestReturnActions_value = actionValue
+                elif (actionValue == highestReturnActions_value):
+                    highestReturnActions.append(action)
 
-            self.policy.setValue(state, [(highestReturnAction, 1)]) # Policy requires [(action, actionProbability)]
+            actionDistribution = [[action, 1 / len(highestReturnActions)] for action in highestReturnActions]
+            self.policy.setValue(state, actionDistribution) # Policy requires [(action, actionProbability), ...]
 
 
     def _valueIteration(self, environment):

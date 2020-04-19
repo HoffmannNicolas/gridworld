@@ -8,14 +8,17 @@ class V():
     # The V value-function measures the attractiveness of each state.
     # V : {State} -> R
 
-    def __init__(self, environment):
+    def __init__(self, environment, initialValue=None):
         print("New V")
         self.name = "V"
 
         self.V = {}
         for state in environment.states():
             if not(isinstance(state, str)): state = str(state)
-            self.V[state] = random.random() * 0.1
+
+            # Unless otherwise specified, V is uniformely defined in [0, 0.1]
+            if (initialValue is None): self.V[state] = random.random() * 0.1
+            else: self.V[state] = initialValue
 
 
     def setValue(self, state, value):

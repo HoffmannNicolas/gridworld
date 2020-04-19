@@ -38,7 +38,7 @@ class Agent_dynamicProgramming(Agent.Agent):
         return action
 
 
-    def onTransition(self, environment):
+    def onTransition(self, previousState, action, newState, reward, environment):
         self._valueIteration(environment)
         print(f"[{self.name}] : Value Iteration done")
 
@@ -47,6 +47,6 @@ class Agent_dynamicProgramming(Agent.Agent):
         print(f"[{self.name}] : Greedy Policy computed")
 
 
-    def onEpisodeEnd(self):
+    def onEpisodeEnd(self, previousEpisodesStates):
         print(f"[{self.name}] : Nothing to do at the end of an episode")
 
