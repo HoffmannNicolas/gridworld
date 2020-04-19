@@ -16,8 +16,8 @@ import Gridworld.GridworldVisualizer as GridworldVisualizer
 
 # Start training
 # agent = Agent_random.Agent_random()
-# agent = Agent_dynamicProgramming.Agent_dynamicProgramming()
-agent = Agent_MC_FirstVisit_V.Agent_MC_FirstVisit_V()
+agent = Agent_dynamicProgramming.Agent_dynamicProgramming(epsilon=0.8)
+# agent = Agent_MC_FirstVisit_V.Agent_MC_FirstVisit_V(epsilon=0.8)
 
 gridworld = Gridworld.Gridworld(agent, gridWidth=5, gridHeight=5, numberOfObstacles=5)
 
@@ -57,6 +57,6 @@ print("Computation finished after " + str(stepNumber) + " steps.")
 print("episodeEnded : ", episodeEnded)
 
 imagesGrid[0].save(f'_temporary/Step{stepNumber}_{agent.name}_grid.gif', save_all=True, append_images=imagesGrid[1:], optimize=True, duration=40, loop=0)
-imagesV[0].save(f'_temporary/Step{stepNumber}_{agent.name}__V.gif', save_all=True, append_images=imagesV[1:], optimize=True, duration=40, loop=0)
+imagesV[0].save(f'_temporary/Step{stepNumber}_{agent.name}.gif', save_all=True, append_images=imagesV[1:], optimize=True, duration=40, loop=0)
 
 

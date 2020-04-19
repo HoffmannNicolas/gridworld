@@ -20,9 +20,7 @@ class Agent_random(Agent.Agent):
 
 
     def choseAction(self, environment):
-        action = random.choice(environment.possibleActions(self.state))
-        print(f"[{self.name}] Action {action} chosen !")
-        return action
+        return self._choseRandomAction(environment, verbose=True)
 
 
     def onTransition(self, environment):

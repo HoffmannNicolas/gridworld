@@ -10,11 +10,13 @@ import Agent.V as V
 
 class Agent_dynamicProgramming(Agent.Agent):
 
-    def __init__(self, gamma=0.8):
+    def __init__(self, gamma=0.8, epsilon=1):
         super().__init__()
         print("New DP Agent")
-        self.name = "DP_Agent"
         self.gamma = gamma
+        self.epsilon = epsilon
+        self.name = "DP_Agent"
+        if (self.epsilon < 1): self.name = self.name + f"_eps{self.epsilon}"
 
 
     def onEpisodeStart(self, environment):
@@ -30,12 +32,8 @@ class Agent_dynamicProgramming(Agent.Agent):
 
 
     def choseAction(self, environment):
-        actionDistribution = self.policy(self.state) # Select action distribution from policy
-        actionDistribution = sorted(actionDistribution, key=lambda x : x[1]) # Sort action distribution
-        actionPair = actionDistribution[0] # Select most probable actionPair
-        action = actionPair[0] # (action, actionProbability) -> action
-        print(f"[{self.name}] Action {action} chosen !")
-        return action
+        if (self.epsilon == 1): return self._sampleActionFromPolicy(environment, verbose=True)
+        else: return self._epsilonGreedyActionFromPolicy(environment, verbose=True)
 
 
     def onTransition(self, previousState, action, newState, reward, environment):
