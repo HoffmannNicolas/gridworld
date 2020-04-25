@@ -56,6 +56,8 @@ class GridworldVisualizer():
         )
         image = self._drawV(image)
 
+        image = self._drawPolicyArrows(image)
+
         image = self._drawGrid(image)
 
         image = self._drawAgent(image)
@@ -75,6 +77,8 @@ class GridworldVisualizer():
         image = self._drawGrid(image)
 
         image = self._drawQArrows(image)
+        
+        image = self._drawPolicyArrows(image)
 
         image = self._drawAgent(image)
 
@@ -202,15 +206,15 @@ class GridworldVisualizer():
 
         # Design of top arrow. This design is rotated for the other arrows (right, bottom and left arrows).
         startXShift = 0.3
-        startYShift = 0.15
+        startYShift = 0.20
         sideXShift = 0.1
-        sideYShift = 0.05
+        sideYShift = 0.1
         arrows = {}
         arrows["UP"] = {}
         arrows["UP"]["start"] = (startXShift * self.cellWidth, startYShift * self.cellHeight)
         arrows["UP"]["point"] = (startXShift * self.cellWidth, -startYShift * self.cellHeight)
-        arrows["UP"]["side1"] = ((startXShift - sideXShift) * self.cellWidth, (startYShift - sideXShift) * self.cellHeight)
-        arrows["UP"]["side2"] = ((startXShift + sideXShift) * self.cellWidth, (startYShift - sideXShift) * self.cellHeight)
+        arrows["UP"]["side1"] = ((startXShift - sideXShift) * self.cellWidth, (startYShift - sideYShift) * self.cellHeight)
+        arrows["UP"]["side2"] = ((startXShift + sideXShift) * self.cellWidth, (startYShift - sideYShift) * self.cellHeight)
 
         def rotate(coord, angle_deg):
             # [x', y'] = [cos  sin] |x|
@@ -266,6 +270,77 @@ class GridworldVisualizer():
         return image
 
 
+    def _drawPolicyArrows(self, image):
 
+        imageDraw = ImageDraw.Draw(image)
+
+        # Design of top arrow. This design is rotated for the other arrows (right, bottom and left arrows).
+        startXShift = 0.5
+        startYShift = 0.3
+        sideXShift = 0.1
+        sideYShift = 0.1
+        arrows = {}
+        arrows["UP"] = {}
+        arrows["UP"]["start"] = (startXShift * self.cellWidth, (1-startYShift) * self.cellHeight)
+        arrows["UP"]["point"] = (startXShift * self.cellWidth, startYShift * self.cellHeight)
+        arrows["UP"]["side1"] = ((startXShift - sideXShift) * self.cellWidth, (startYShift + sideYShift) * self.cellHeight)
+        arrows["UP"]["side2"] = ((startXShift + sideXShift) * self.cellWidth, (startYShift + sideYShift) * self.cellHeight)
+
+        def rotate(coord, angle_deg):
+            # [x', y'] = [cos  sin] |x|
+            #            [-sin cos] |y|
+            x = coord[0]
+            y = coord[1]
+            angle_rad = 3.1415 * angle_deg / 180
+            cos = math.cos(angle_rad)
+            sin = math.sin(angle_rad)
+            rotatedCoords = [cos * x + sin * y, -sin * x + cos * y]
+            rotatedCoords = [round(rotatedCoords[0], 2), round(rotatedCoords[1], 2)]
+            return rotatedCoords
+
+        def rotateArrow(arrow, angle_deg):
+            result = {}
+            for key in arrow.keys():
+                result[key] = rotate(arrow[key], angle_deg)
+            return result
+
+        def addToArrow(arrow, coord):
+            for key in arrow.keys():
+                arrow[key] = [arrowCoord + extCoord for arrowCoord, extCoord in zip(arrow[key], coord)]
+
+        arrows["LEFT"] = rotateArrow(arrows["UP"], 90)
+        addToArrow(arrows["LEFT"], (0, self.cellHeight))
+
+        arrows["DOWN"] = rotateArrow(arrows["UP"], 180)
+        addToArrow(arrows["DOWN"], (self.cellWidth, self.cellHeight))
+
+        arrows["RIGHT"] = rotateArrow(arrows["UP"], 270)
+        addToArrow(arrows["RIGHT"], (self.cellWidth, 0))
+
+        # Draw Q arrows
+        for cellCoordX in range(self.gridworld.gridWidth):
+            for cellCoordY in range(self.gridworld.gridHeight):
+                state = (cellCoordX, cellCoordY)
+                
+                if (state in self.gridworld.obstacles):
+                    continue
+
+                topLeftCoord = (cellCoordX * self.cellWidth, cellCoordY * self.cellHeight)
+
+                actionDistribution = self.gridworld.agent.policy(state)
+                actionPair = actionDistribution[0]
+                action = actionPair[0]
+
+                arrowColor = (255, 255, 255)
+
+                # Compute 4 arrow points :
+                startCoord = tuple([arrowCoord + cellCoord for arrowCoord, cellCoord in zip(arrows[action]["start"], topLeftCoord)])
+                pointCoord = tuple([arrowCoord + cellCoord for arrowCoord, cellCoord in zip(arrows[action]["point"], topLeftCoord)])
+                sideCoord_1 = tuple([arrowCoord + cellCoord for arrowCoord, cellCoord in zip(arrows[action]["side1"], topLeftCoord)])
+                sideCoord_2 = tuple([arrowCoord + cellCoord for arrowCoord, cellCoord in zip(arrows[action]["side2"], topLeftCoord)])
+                # Draw arrow
+                imageDraw.line((startCoord, pointCoord, sideCoord_1, pointCoord, sideCoord_2), fill=arrowColor)
+
+        return image
 
 
