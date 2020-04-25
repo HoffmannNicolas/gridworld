@@ -56,11 +56,11 @@ class Agent():
         else: return self._choseRandomAction(environment)
 
 
-    def _computeGreedyPolicy(self, environment):
+    def _computeGreedyPolicy_fromV(self, environment):
         # "Reinforcement Learning, An Introduction" Second edition, Sutton & Barto (p.80 "Policy Improvement")
         for state in environment.emptyStates():
 
-            highestReturnActions = []
+            highestReturnActions = [] # A [list] is used because several actions might have same highest value
             highestReturnActions_value = None
 
             for action in environment.possibleActions(state):
@@ -69,6 +69,28 @@ class Agent():
                 for nextState, nextStatesProbability, nextReward, _ in environment._transition(state, action): # episodeEnded is discarted
                     transitionValue = nextReward + self.gamma * self.V(nextState)
                     actionValue += transitionValue * nextStatesProbability
+
+                if (len(highestReturnActions) == 0):
+                    highestReturnActions = [action]
+                    highestReturnActions_value = actionValue
+                elif (actionValue > highestReturnActions_value):
+                    highestReturnActions = [action]
+                    highestReturnActions_value = actionValue
+                elif (actionValue == highestReturnActions_value):
+                    highestReturnActions.append(action)
+
+            actionDistribution = [[action, 1 / len(highestReturnActions)] for action in highestReturnActions]
+            self.policy.setValue(state, actionDistribution) # Policy requires [(action, actionProbability), ...]
+
+
+    def _computeGreedyPolicy_fromQ(self, environment):
+        for state in environment.emptyStates():
+
+            highestReturnActions = [] # A [list] is used because several actions might have same highest value
+            highestReturnActions_value = None
+
+            for action in environment.possibleActions(state):
+                actionValue = self.Q(state, action)
 
                 if (len(highestReturnActions) == 0):
                     highestReturnActions = [action]

@@ -29,7 +29,7 @@ class Agent_MC_FirstVisit_V(Agent.Agent):
 
         if (self.policy == None):
             self.policy = Policy.Policy(environment)
-            self._computeGreedyPolicy(environment)
+            self._computeGreedyPolicy_fromV(environment)
             if (verbose): print(f"[{self.name}] : Policy set up")
 
         if (self.returns == None):
@@ -67,7 +67,7 @@ class Agent_MC_FirstVisit_V(Agent.Agent):
                 self.V.setValue(state, averageG) 
         if (verbose): print(f"[{self.name}] V updated !")
 
-        self._computeGreedyPolicy(environment)
+        self._computeGreedyPolicy_fromV(environment)
         if (verbose): print(f"[{self.name}] Policy updated !")
 
 

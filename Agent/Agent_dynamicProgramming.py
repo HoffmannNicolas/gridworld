@@ -27,7 +27,7 @@ class Agent_dynamicProgramming(Agent.Agent):
 
         if (self.policy == None):
             self.policy = Policy.Policy(environment)
-            self._computeGreedyPolicy(environment)
+            self._computeGreedyPolicy_fromV(environment)
             print(f"[{self.name}] : Policy set up")
 
 
@@ -40,7 +40,7 @@ class Agent_dynamicProgramming(Agent.Agent):
         self._valueIteration(environment)
         print(f"[{self.name}] : Value Iteration done")
 
-        self._computeGreedyPolicy(environment)
+        self._computeGreedyPolicy_fromV(environment)
         # TODO : Compare new and old policy and stop if needed
         print(f"[{self.name}] : Greedy Policy computed")
 
