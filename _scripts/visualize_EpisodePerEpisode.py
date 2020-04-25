@@ -11,6 +11,7 @@ import Agent.Agent_dynamicProgramming as Agent_dynamicProgramming
 import Agent.Agent_MC_FirstVisit_V as Agent_MC_FirstVisit_V
 import Agent.Agent_nStepTD_V as Agent_nStepTD_V
 import Agent.Agent_nStepTD_Q as Agent_nStepTD_Q
+import Agent.Agent_nStepTD_Q_offPolicy as Agent_nStepTD_Q_offPolicy
 
 import Gridworld.Gridworld as Gridworld
 import Gridworld.GridworldVisualizer as GridworldVisualizer
@@ -21,9 +22,10 @@ import Gridworld.GridworldVisualizer as GridworldVisualizer
 # agent = Agent_dynamicProgramming.Agent_dynamicProgramming(epsilon=0.8)
 # agent = Agent_MC_FirstVisit_V.Agent_MC_FirstVisit_V(epsilon=0.8)
 # agent = Agent_nStepTD_V.Agent_nStepTD_V(numberOfSteps=1, epsilon=0.8, alpha=0.3)
-agent = Agent_nStepTD_Q.Agent_nStepTD_Q(numberOfSteps=1, epsilon=0.8, alpha=0.3, gamma=0.95)
+# agent = Agent_nStepTD_Q.Agent_nStepTD_Q(numberOfSteps=1, epsilon=0.8, alpha=0.3, gamma=0.95)
+agent = Agent_nStepTD_Q_offPolicy.Agent_nStepTD_Q_offPolicy(numberOfSteps=1, epsilon=0.1, alpha=0.3, gamma=0.9)
 
-gridworld = Gridworld.Gridworld(agent, gridWidth=8, gridHeight=8, numberOfObstacles=20, exploringStates=True)
+gridworld = Gridworld.Gridworld(agent, gridWidth=8, gridHeight=8, numberOfObstacles=10, exploringStates=True)
 
 visualizer = GridworldVisualizer.GridworldVisualizer(gridworld)
 

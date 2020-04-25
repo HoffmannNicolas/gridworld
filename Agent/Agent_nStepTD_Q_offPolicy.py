@@ -8,11 +8,11 @@ import Agent.Policy as Policy
 import Agent.Q as Q
 
 
-class Agent_nStepTD_Q(Agent.Agent):
+class Agent_nStepTD_Q_offPolicy(Agent.Agent):
 
     def __init__(self, gamma=0.8, epsilon=1, alpha=0.9, numberOfSteps=1, verbose=False):
         super().__init__()
-        print(f"New {numberOfSteps}StepTD_Q Agent")
+        print(f"New {numberOfSteps}StepTD_Q_offPolicy Agent")
         self.gamma = gamma
         assert (epsilon >= 0 and epsilon <= 1), f"Espilon {epsilon} out of bound : 0 <= Epsilon <= 1"
         self.epsilon = epsilon
@@ -20,7 +20,7 @@ class Agent_nStepTD_Q(Agent.Agent):
         self.alpha = alpha
         self.verbose = verbose
         
-        self.name = f"{numberOfSteps}StepTD_Q_Agent"
+        self.name = f"{numberOfSteps}StepTD_Q_Agent_offPolicy (Q-learning)"
         if (self.epsilon < 1): self.name = self.name + f"_eps{self.epsilon}"
         self.name = self.name + f"_alpha{self.alpha}"
 
@@ -35,8 +35,6 @@ class Agent_nStepTD_Q(Agent.Agent):
             self._computeGreedyPolicy_fromQ(environment)
             print(f"[{self.name}] : Policy set up")
         
-        self.episode = [] # Used to store temporary information in-between spets for later update
-
 
     def choseAction(self, environment, verbose=False):
         if (self.epsilon == 1): return self._sampleActionFromPolicy(environment, verbose=self.verbose)
@@ -44,18 +42,15 @@ class Agent_nStepTD_Q(Agent.Agent):
 
 
     def onTransition(self, previousState, action, state, reward, environment, verbose=False):
-        # "Reinforcement Learning, An Introduction" Second edition, Sutton & Barto (p.120 6.2)
+        # "Reinforcement Learning, An Introduction" Second edition, Sutton & Barto (p.131 6.8)
 
-        if (len(self.episode) == 0):
-            # This is the very first step, we cannot make updates because we miss some information. We only store information for later use
-            self.episode.append(action)
-            return
-
-        previousAction = self.episode[0]
-        valueError = reward + self.gamma * self.Q(state, action) - self.Q(previousState, previousAction)
-        newValue = self.Q(previousState, previousAction) + self.alpha * valueError
-        self.Q.setValue(previousState, previousAction, newValue)
-        self.episode[0] = action # Remember current action for later updates
+        bestNextActionValue = -1
+        for nextAction in environment.possibleActions(state):
+            if (self.Q(state, nextAction) > bestNextActionValue):
+                bestNextActionValue = self.Q(state, nextAction)
+        valueError = reward + self.gamma * bestNextActionValue - self.Q(previousState, action)
+        newValue = self.Q(previousState, action) + self.alpha * valueError
+        self.Q.setValue(previousState, action, newValue)
         if (self.verbose): print(f"[{self.name}] : Q updated !")
 
         self._computeGreedyPolicy_fromQ(environment)
