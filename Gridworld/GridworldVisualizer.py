@@ -197,7 +197,7 @@ class GridworldVisualizer():
 
                 Vstate = self.gridworld.agent.V((cellCoordX, cellCoordY)) # Vstate := V(state)
                 # Vstate = math.log(1 + Vstate)
-                Vstate = math.sqrt(Vstate)
+                if (Vstate > 0): Vstate = math.sqrt(Vstate)
                 cellColor = tuple([int(a*Vstate + b * (1-Vstate)) for (a, b) in zip(self.highestVColor, self.emptyCellColor)])
 
                 imageDraw.rectangle(
@@ -267,7 +267,7 @@ class GridworldVisualizer():
 
                 for action in self.gridworld.possibleActions(state):
                     stateActionValue = self.gridworld.agent.Q(state, action) # Q(state, action)
-                    stateActionValue = math.sqrt(stateActionValue)
+                    if (stateActionValue > 0): stateActionValue = math.sqrt(stateActionValue)
                     arrowColor = tuple([int(a*stateActionValue + b * (1-stateActionValue)) for (a, b) in zip(self.highestVColor, self.emptyCellColor)])
 
                     # Compute 4 arrow points :
