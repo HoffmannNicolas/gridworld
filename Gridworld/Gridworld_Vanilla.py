@@ -15,7 +15,7 @@ class Gridworld_Vanilla(Gridworld):
 
     def __init__(self, agent):
         print("New Gridworld")
-        self.name = "Gridworld"
+        self.name = "Gridworld_Vanilla"
         self.gridHeight = 3
         self.gridWidth = 4
         self.grid = np.zeros((self.gridHeight, self.gridWidth), dtype=int)
