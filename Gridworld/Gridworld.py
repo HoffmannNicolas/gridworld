@@ -28,6 +28,7 @@ class Gridworld():
 
         self.goalState = self._generateObjectState()
 
+        # TODO : Unify all objects into a dedicated class. Attriputes : isPassible, isTerminal, rewardOnTransition, etc.
         self.numberOfObstacles = numberOfObstacles
         self.obstacles = []
         for _ in range(self.numberOfObstacles):
@@ -35,6 +36,8 @@ class Gridworld():
             if (obstacleCoord != self.startState and obstacleCoord != self.goalState) :
                 # TODO : Also check if a path still exists from startState to goalState
                 self.obstacles.append(obstacleCoord)
+
+        self.obstacleCosts = [0 for _ in range(len(self.obstacles))] # No direct cost associated with bumping into an obstacle by default
 
         self.agent = agent
 
@@ -65,14 +68,18 @@ class Gridworld():
         if (action == "LEFT") : nextState = (nextState[0]-1, nextState[1])
         if (action == "RIGHT") : nextState = (nextState[0]+1, nextState[1])
             # Apply constraints
+        obstacleInducedReward = 0
         if (nextState[0] < 0 or nextState[0] > (self.gridWidth-1)) : # Horizontally out of bounds
             nextState = currentState
         if (nextState[1] < 0 or nextState[1] > (self.gridHeight-1)) : # Vertically out of bounds
             nextState = currentState
-        if (nextState in self.obstacles): nextState = currentState # Bounced into obstacle
+        if (nextState in self.obstacles):
+            obstacleInducedReward = self.obstacleCosts[self.obstacles.index(nextState)]
+            nextState = currentState # Bounced into obstacle
 
         nextStepProbability = 1 # Deterministic transition
         reward, episodeEnded = self._reward(currentState, nextState)
+        reward += obstacleInducedReward
         
         return [(nextState, nextStepProbability, reward, episodeEnded)] # Returns a list of all possible next steps
 

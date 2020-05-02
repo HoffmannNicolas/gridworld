@@ -24,9 +24,11 @@ class GridworldVisualizer():
         self.agentColor = (255, 255, 0)
 
         self.obstacleColor = (100, 50, 50)
-        
+
+        self.negativeRewardColor = (255, 100, 100)
+
         self.highestVColor = (0, 255, 0)
-        
+
 
 
     def visualizeGrid(self):
@@ -106,15 +108,24 @@ class GridworldVisualizer():
     
         imageDraw = ImageDraw.Draw(image)
 
-        for obstacleState in self.gridworld.obstacles:
+        for obstacleState, obstacleCost in zip(self.gridworld.obstacles, self.gridworld.obstacleCosts):
             leftCoord = obstacleState[0] * self.cellWidth
             rightCoord = leftCoord + self.cellWidth - 1
 
             topCoord = obstacleState[1] * self.cellHeight
             bottomCoord = topCoord + self.cellHeight - 1
 
-            margin = 2
-            imageDraw.ellipse((leftCoord+margin, topCoord+margin, rightCoord-margin, bottomCoord-margin), fill=self.obstacleColor)
+            if (obstacleCost == 0):
+                margin = 2
+                imageDraw.ellipse((leftCoord+margin, topCoord+margin, rightCoord-margin, bottomCoord-margin), fill=self.obstacleColor)
+            if (obstacleCost < 0):
+                imageDraw.rectangle(
+                    [
+                        (leftCoord+1, topCoord+1), 
+                        (rightCoord-1, bottomCoord-1), 
+                    ], 
+                    self.negativeRewardColor
+                )
 
         return image
 
